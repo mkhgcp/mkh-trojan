@@ -1,0 +1,28 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/irejsn', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/irejsn']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'irejsn'
+      - '--image=gcr.io/$PROJECT_ID/irejsn'
+      - '--region=europe-west4'
+      - '--platform=managed'
+      - '--memory=2048Mi'
+      - '--cpu=1'
+      - '--timeout=3600'
+      - '--max-instances=16'
+      - '--min-instances=1'
+      - '--concurrency=1000'
+      - '--execution-environment=gen2'
+      - '--no-cpu-throttling'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/irejsn'
